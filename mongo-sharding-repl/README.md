@@ -85,6 +85,15 @@ db.helloDoc.countDocuments();
 EOF
 ```
 
+Сделайте проверку на реплике-1 шарда 1:
+
+```bash
+docker compose exec -T shard1-secondary-1 mongosh --port 27021 <<EOF
+use somedb
+db.helloDoc.countDocuments();
+EOF
+```
+
 Сделайте проверку на шарде 2:
 
 ```bash
