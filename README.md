@@ -1,35 +1,76 @@
-# pymongo-api
+# Спринт 2
 
-## Как запустить
+## Как запустить и проверить код 
+### Перейти в sharding-repl-cache
+```bash
+cd sharding-repl-cache
+```
 
-Запускаем mongodb и приложение
+### Запустите контейнеры
 
-```shell
+```bash
 docker compose up -d
 ```
 
-Заполняем mongodb данными
+### Инициализация всего, что связано с mongo
 
-```shell
-./scripts/mongo-init.sh
+```bash
+chmod +x ./scripts/init.sh
+./scripts/init.sh
 ```
 
-## Как проверить
+### Наполнение данными
 
-### Если вы запускаете проект на локальной машине
-
-Откройте в браузере http://localhost:8080
-
-### Если вы запускаете проект на предоставленной виртуальной машине
-
-Узнать белый ip виртуальной машины
-
-```shell
-curl --silent http://ifconfig.me
+```bash
+chmod +x ./scripts/populate.sh
+./scripts/populate.sh
 ```
 
-Откройте в браузере http://<ip виртуальной машины>:8080
+### Сделайте проверку на общее количество документов в базе
 
-## Доступные эндпоинты
+```bash
+docker compose exec -T mongos_router mongosh --port 27020 <<EOF
+use somedb
+db.helloDoc.countDocuments()
+EOF
+```
 
-Список доступных эндпоинтов, swagger http://<ip виртуальной машины>:8080/docs
+### Сделайте проверку на шарде 1
+
+```bash
+docker compose exec -T shard1 mongosh --port 27018 <<EOF
+use somedb
+db.helloDoc.countDocuments();
+EOF
+```
+
+### Сделайте проверку на реплике-1 шарда 1
+
+```bash
+docker compose exec -T shard1-secondary-1 mongosh --port 27021 <<EOF
+use somedb
+db.helloDoc.countDocuments();
+EOF
+```
+
+### Сделайте проверку на шарде 2
+
+```bash
+docker compose exec -T shard2 mongosh --port 27019 <<EOF
+use somedb
+db.helloDoc.countDocuments();
+EOF
+```
+
+### Сделайте проверку кеширования
+
+<http://localhost:8080/helloDoc/users>
+
+
+## Схема
+Ссылка на draw.io:
+https://drive.google.com/file/d/1CvlHsbwyILZzDNS1smhAOxvjHdfRbUJm/view?usp=sharing
+
+Та же ссылка в виде картинки:
+![Спринт 2. Схема](readme/sprint-2.jpg)
+
