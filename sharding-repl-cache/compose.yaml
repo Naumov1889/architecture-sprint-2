@@ -1,4 +1,4 @@
-name: sharding-repl-cache
+name: sharding-repl-cache  # имя развертывания
 
 services:
   pymongo_api:
